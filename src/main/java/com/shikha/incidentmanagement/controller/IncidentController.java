@@ -2,9 +2,12 @@
 package com.shikha.incidentmanagement.controller;
 
 import com.shikha.incidentmanagement.model.Incident;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -27,6 +30,9 @@ public class IncidentController {
         return incidents.stream()
             .filter(incident -> incident.getId().equals(id))
             .findFirst()
-            .orElse(null);
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Incident not found"
+            ));
     }
 }
