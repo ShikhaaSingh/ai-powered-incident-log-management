@@ -1,11 +1,23 @@
 
 package com.shikha.incidentmanagement.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
 public class Incident {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String title;
     private String status;
+
+    public Incident() {
+    }
 
     public Incident(Long id, String title, String status) {
         this.id = id;

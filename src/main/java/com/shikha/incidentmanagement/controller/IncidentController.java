@@ -2,6 +2,7 @@
 package com.shikha.incidentmanagement.controller;
 
 import com.shikha.incidentmanagement.model.Incident;
+import com.shikha.incidentmanagement.repository.IncidentRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,29 +15,28 @@ import java.util.List;
 @RestController
 public class IncidentController {
 
-    private final List<Incident> incidents = List.of(
-        new Incident(1L, "Server is down", "OPEN"),
-        new Incident(2L, "Database connection failed", "RESOLVED"),
-        new Incident(3L, "API response is slow", "OPEN")
-    );
+    private final IncidentRepository incidentRepository;
+
+    public IncidentController(IncidentRepository incidentRepository) {
+        this.incidentRepository = incidentRepository;
+    }
 
     @GetMapping("/api/incidents")
     public List<Incident> getIncidents() {
-        return incidents;
+        return incidentRepository.findAll();
     }
 
     @GetMapping("/api/incidents/filter")
     public List<Incident> filterIncidents(@RequestParam String status) {
-        return incidents.stream()
+        return incidentRepository.findAll()
+            .stream()
             .filter(incident -> incident.getStatus().equalsIgnoreCase(status))
             .toList();
     }
 
     @GetMapping("/api/incidents/{id}")
     public Incident getIncidentById(@PathVariable Long id) {
-        return incidents.stream()
-            .filter(incident -> incident.getId().equals(id))
-            .findFirst()
+        return incidentRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(
                 HttpStatus.NOT_FOUND,
                 "Incident not found"
