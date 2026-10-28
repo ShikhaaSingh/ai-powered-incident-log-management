@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -26,11 +28,18 @@ public class IncidentController {
         return incidentRepository.findAll();
     }
 
+    @PostMapping("/api/incidents")
+    public Incident createIncident(@RequestBody Incident incident) {
+        incident.setId(null);
+        return incidentRepository.save(incident);
+    }
+
     @GetMapping("/api/incidents/filter")
     public List<Incident> filterIncidents(@RequestParam String status) {
         return incidentRepository.findAll()
             .stream()
-            .filter(incident -> incident.getStatus().equalsIgnoreCase(status))
+            .filter(incident -> incident.getStatus() != null
+                && incident.getStatus().equalsIgnoreCase(status))
             .toList();
     }
 
