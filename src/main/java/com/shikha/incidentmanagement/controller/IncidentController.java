@@ -3,8 +3,10 @@ package com.shikha.incidentmanagement.controller;
 
 import com.shikha.incidentmanagement.model.Incident;
 import com.shikha.incidentmanagement.repository.IncidentRepository;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,17 +25,38 @@ public class IncidentController {
         this.incidentRepository = incidentRepository;
     }
 
+    // Get all incidents
     @GetMapping("/api/incidents")
     public List<Incident> getIncidents() {
         return incidentRepository.findAll();
     }
 
+    // Create a new incident
     @PostMapping("/api/incidents")
     public Incident createIncident(@RequestBody Incident incident) {
         incident.setId(null);
         return incidentRepository.save(incident);
     }
 
+    // Update an existing incident
+    @PutMapping("/api/incidents/{id}")
+    public Incident updateIncident(
+            @PathVariable Long id,
+            @RequestBody Incident updatedIncident) {
+
+        Incident existingIncident = incidentRepository.findById(id)
+            .orElseThrow(() -> new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Incident not found"
+            ));
+
+        existingIncident.setTitle(updatedIncident.getTitle());
+        existingIncident.setStatus(updatedIncident.getStatus());
+
+        return incidentRepository.save(existingIncident);
+    }
+
+    // Filter incidents by status
     @GetMapping("/api/incidents/filter")
     public List<Incident> filterIncidents(@RequestParam String status) {
         return incidentRepository.findAll()
@@ -43,6 +66,7 @@ public class IncidentController {
             .toList();
     }
 
+    // Get an incident by ID
     @GetMapping("/api/incidents/{id}")
     public Incident getIncidentById(@PathVariable Long id) {
         return incidentRepository.findById(id)
