@@ -5,13 +5,14 @@ import com.shikha.incidentmanagement.model.Incident;
 import com.shikha.incidentmanagement.repository.IncidentRepository;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -54,6 +55,20 @@ public class IncidentController {
         existingIncident.setStatus(updatedIncident.getStatus());
 
         return incidentRepository.save(existingIncident);
+    }
+
+    // Delete an existing incident
+    @DeleteMapping("/api/incidents/{id}")
+    public void deleteIncident(@PathVariable Long id) {
+
+        if (!incidentRepository.existsById(id)) {
+            throw new ResponseStatusException(
+                HttpStatus.NOT_FOUND,
+                "Incident not found"
+            );
+        }
+
+        incidentRepository.deleteById(id);
     }
 
     // Filter incidents by status
