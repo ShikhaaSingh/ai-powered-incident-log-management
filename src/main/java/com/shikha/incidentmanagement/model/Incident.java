@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 public class Incident {
@@ -13,7 +15,15 @@ public class Incident {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Incident title is required")
     private String title;
+
+    @NotBlank(message = "Incident status is required")
+    @Pattern(
+        regexp = "OPEN|RESOLVED",
+        flags = Pattern.Flag.CASE_INSENSITIVE,
+        message = "Status must be OPEN or RESOLVED"
+    )
     private String status;
 
     public Incident() {

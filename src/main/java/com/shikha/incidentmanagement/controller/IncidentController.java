@@ -4,6 +4,8 @@ package com.shikha.incidentmanagement.controller;
 import com.shikha.incidentmanagement.model.Incident;
 import com.shikha.incidentmanagement.repository.IncidentRepository;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +36,7 @@ public class IncidentController {
 
     // Create a new incident
     @PostMapping("/api/incidents")
-    public Incident createIncident(@RequestBody Incident incident) {
+    public Incident createIncident(@Valid @RequestBody Incident incident) {
         incident.setId(null);
         return incidentRepository.save(incident);
     }
@@ -43,7 +45,7 @@ public class IncidentController {
     @PutMapping("/api/incidents/{id}")
     public Incident updateIncident(
             @PathVariable Long id,
-            @RequestBody Incident updatedIncident) {
+            @Valid @RequestBody Incident updatedIncident) {
 
         Incident existingIncident = incidentRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(
