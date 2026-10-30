@@ -2,11 +2,10 @@
 package com.shikha.incidentmanagement.controller;
 
 import com.shikha.incidentmanagement.model.Incident;
-import com.shikha.incidentmanagement.repository.IncidentRepository;
+import com.shikha.incidentmanagement.service.IncidentService;
 
 import jakarta.validation.Valid;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,30 +14,28 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
 @RestController
 public class IncidentController {
 
-    private final IncidentRepository incidentRepository;
+    private final IncidentService incidentService;
 
-    public IncidentController(IncidentRepository incidentRepository) {
-        this.incidentRepository = incidentRepository;
+    public IncidentController(IncidentService incidentService) {
+        this.incidentService = incidentService;
     }
 
     // Get all incidents
     @GetMapping("/api/incidents")
     public List<Incident> getIncidents() {
-        return incidentRepository.findAll();
+        return incidentService.getAllIncidents();
     }
 
     // Create a new incident
     @PostMapping("/api/incidents")
     public Incident createIncident(@Valid @RequestBody Incident incident) {
-        incident.setId(null);
-        return incidentRepository.save(incident);
+        return incidentService.createIncident(incident);
     }
 
     // Update an existing incident
@@ -47,49 +44,24 @@ public class IncidentController {
             @PathVariable Long id,
             @Valid @RequestBody Incident updatedIncident) {
 
-        Incident existingIncident = incidentRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Incident not found"
-            ));
-
-        existingIncident.setTitle(updatedIncident.getTitle());
-        existingIncident.setStatus(updatedIncident.getStatus());
-
-        return incidentRepository.save(existingIncident);
+        return incidentService.updateIncident(id, updatedIncident);
     }
 
     // Delete an existing incident
     @DeleteMapping("/api/incidents/{id}")
     public void deleteIncident(@PathVariable Long id) {
-
-        if (!incidentRepository.existsById(id)) {
-            throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Incident not found"
-            );
-        }
-
-        incidentRepository.deleteById(id);
+        incidentService.deleteIncident(id);
     }
 
     // Filter incidents by status
     @GetMapping("/api/incidents/filter")
     public List<Incident> filterIncidents(@RequestParam String status) {
-        return incidentRepository.findAll()
-            .stream()
-            .filter(incident -> incident.getStatus() != null
-                && incident.getStatus().equalsIgnoreCase(status))
-            .toList();
+        return incidentService.filterIncidents(status);
     }
 
     // Get an incident by ID
     @GetMapping("/api/incidents/{id}")
     public Incident getIncidentById(@PathVariable Long id) {
-        return incidentRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Incident not found"
-            ));
+        return incidentService.getIncidentById(id);
     }
 }
