@@ -63,10 +63,6 @@ public class IncidentService {
 
     // Filter incidents by status
     public List<Incident> filterIncidents(String status) {
-        return incidentRepository.findAll()
-            .stream()
-            .filter(incident -> incident.getStatus() != null
-                && incident.getStatus().equalsIgnoreCase(status))
-            .toList();
-    }
+    return incidentRepository.findByStatusIgnoreCase(status);
+   }
 }
