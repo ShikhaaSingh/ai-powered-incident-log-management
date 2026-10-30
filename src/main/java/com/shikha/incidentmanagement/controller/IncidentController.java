@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -63,5 +66,16 @@ public class IncidentController {
     @GetMapping("/api/incidents/{id}")
     public Incident getIncidentById(@PathVariable Long id) {
         return incidentService.getIncidentById(id);
+    }
+
+    // Get incidents with pagination
+    @GetMapping("/api/incidents/page")
+    public Page<Incident> getIncidentsWithPagination(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return incidentService.getIncidentsWithPagination(pageable);
     }
 }

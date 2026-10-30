@@ -6,6 +6,8 @@ import com.shikha.incidentmanagement.repository.IncidentRepository;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -65,4 +67,9 @@ public class IncidentService {
     public List<Incident> filterIncidents(String status) {
     return incidentRepository.findByStatusIgnoreCase(status);
    }
+
+   // Get incidents with pagination
+   public Page<Incident> getIncidentsWithPagination(Pageable pageable) {
+    return incidentRepository.findAll(pageable);
+}
 }
