@@ -4,10 +4,10 @@ package com.shikha.incidentmanagement.service;
 import com.shikha.incidentmanagement.model.Incident;
 import com.shikha.incidentmanagement.repository.IncidentRepository;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -29,10 +29,8 @@ public class IncidentService {
     // Get incident by ID
     public Incident getIncidentById(Long id) {
         return incidentRepository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Incident not found"
-            ));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Incident not found"));
     }
 
     // Create incident
@@ -55,9 +53,7 @@ public class IncidentService {
     public void deleteIncident(Long id) {
         if (!incidentRepository.existsById(id)) {
             throw new ResponseStatusException(
-                HttpStatus.NOT_FOUND,
-                "Incident not found"
-            );
+                    HttpStatus.NOT_FOUND, "Incident not found");
         }
 
         incidentRepository.deleteById(id);
@@ -65,11 +61,11 @@ public class IncidentService {
 
     // Filter incidents by status
     public List<Incident> filterIncidents(String status) {
-    return incidentRepository.findByStatusIgnoreCase(status);
-   }
+        return incidentRepository.findByStatusIgnoreCase(status);
+    }
 
-   // Get incidents with pagination
-   public Page<Incident> getIncidentsWithPagination(Pageable pageable) {
-    return incidentRepository.findAll(pageable);
-}
+    // Get incidents with pagination and sorting
+    public Page<Incident> getIncidentsWithPagination(Pageable pageable) {
+        return incidentRepository.findAll(pageable);
+    }
 }
