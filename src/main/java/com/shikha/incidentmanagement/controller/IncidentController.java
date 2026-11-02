@@ -1,6 +1,7 @@
 
 package com.shikha.incidentmanagement.controller;
 
+import com.shikha.incidentmanagement.dto.ApiResponse;
 import com.shikha.incidentmanagement.model.Incident;
 import com.shikha.incidentmanagement.service.IncidentService;
 
@@ -27,60 +28,110 @@ public class IncidentController {
 
     // Get all incidents
     @GetMapping("/api/incidents")
-    public List<Incident> getAllIncidents() {
-        return incidentService.getAllIncidents();
+    public ApiResponse<List<Incident>> getAllIncidents() {
+
+        List<Incident> incidents = incidentService.getAllIncidents();
+
+        return new ApiResponse<>(
+                true,
+                "Incidents fetched successfully",
+                incidents
+        );
     }
 
     // Get incident by ID
+
     @GetMapping("/api/incidents/{id}")
-    public Incident getIncidentById(@PathVariable Long id) {
-        return incidentService.getIncidentById(id);
+    public ApiResponse<Incident> getIncidentById(@PathVariable Long id) {
+
+        Incident incident = incidentService.getIncidentById(id);
+
+        return new ApiResponse<>(
+                true,
+                "Incident fetched successfully",
+                incident
+        );
     }
 
     // Filter incidents by status
-    @GetMapping("/api/incidents/filter")
-    public List<Incident> filterIncidents(
-            @RequestParam String status) {
-        return incidentService.filterIncidents(status);
-    }
 
+    @GetMapping("/api/incidents/filter")
+    public ApiResponse<List<Incident>> filterIncidents(
+            @RequestParam String status) {
+
+        List<Incident> incidents = incidentService.filterIncidents(status);
+
+        return new ApiResponse<>(
+                true,
+                "Incidents filtered successfully",
+                incidents
+        );
+    }
     // Create a new incident
     @PostMapping("/api/incidents")
-    public Incident createIncident(
+    public ApiResponse<Incident> createIncident(
             @Valid @RequestBody Incident incident) {
-        return incidentService.createIncident(incident);
+
+        Incident createdIncident = incidentService.createIncident(incident);
+
+        return new ApiResponse<>(
+                true,
+                "Incident created successfully",
+                createdIncident
+        );
     }
 
     // Update an existing incident
     @PutMapping("/api/incidents/{id}")
-    public Incident updateIncident(
+    public ApiResponse<Incident> updateIncident(
             @PathVariable Long id,
             @Valid @RequestBody Incident incident) {
-        return incidentService.updateIncident(id, incident);
+
+        Incident updatedIncident =
+                incidentService.updateIncident(id, incident);
+
+        return new ApiResponse<>(
+                true,
+                "Incident updated successfully",
+                updatedIncident
+        );
     }
+
 
     // Delete an incident
-    @DeleteMapping("/api/incidents/{id}")
-    public ResponseEntity<Void> deleteIncident(
-            @PathVariable Long id) {
+        @DeleteMapping("/api/incidents/{id}")
+        public ApiResponse<Void> deleteIncident(@PathVariable Long id) {
+
         incidentService.deleteIncident(id);
-        return ResponseEntity.noContent().build();
-    }
 
-    // Get incidents with pagination and sorting
-    @GetMapping("/api/incidents/page")
-    public Page<Incident> getIncidentsWithPagination(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction) {
+        return new ApiResponse<>(
+                true,
+                "Incident deleted successfully",
+                null
+        );
+}
 
-        Sort sort = direction.equalsIgnoreCase("desc")
-                ? Sort.by(sortBy).descending()
-                : Sort.by(sortBy).ascending();
+   // Get incidents with pagination and sorting
+@GetMapping("/api/incidents/page")
+public ApiResponse<Page<Incident>> getIncidentsWithPagination(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size,
+        @RequestParam(defaultValue = "id") String sortBy,
+        @RequestParam(defaultValue = "asc") String direction) {
 
-        Pageable pageable = PageRequest.of(page, size, sort);
+    Sort sort = direction.equalsIgnoreCase("desc")
+            ? Sort.by(sortBy).descending()
+            : Sort.by(sortBy).ascending();
 
-        return incidentService.getIncidentsWithPagination(pageable);
-    }
+    Pageable pageable = PageRequest.of(page, size, sort);
+
+    Page<Incident> incidents =
+            incidentService.getIncidentsWithPagination(pageable);
+
+    return new ApiResponse<>(
+            true,
+            "Incidents fetched successfully",
+            incidents
+    );
+}
 }
