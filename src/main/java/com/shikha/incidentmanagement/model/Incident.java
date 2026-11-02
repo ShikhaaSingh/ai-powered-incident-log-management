@@ -26,13 +26,22 @@ public class Incident {
     )
     private String status;
 
+    @NotBlank(message = "Incident severity is required")
+    @Pattern(
+        regexp = "LOW|MEDIUM|HIGH|CRITICAL",
+        flags = Pattern.Flag.CASE_INSENSITIVE,
+        message = "Severity must be LOW, MEDIUM, HIGH or CRITICAL"
+    )
+    private String severity;
+
     public Incident() {
     }
 
-    public Incident(Long id, String title, String status) {
+    public Incident(Long id, String title, String status, String severity) {
         this.id = id;
         this.title = title;
         this.status = status;
+        this.severity = severity;
     }
 
     public Long getId() {
@@ -57,5 +66,13 @@ public class Incident {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getSeverity() {
+        return severity;
+    }
+
+    public void setSeverity(String severity) {
+        this.severity = severity;
     }
 }
