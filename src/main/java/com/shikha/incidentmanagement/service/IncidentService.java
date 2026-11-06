@@ -148,4 +148,30 @@ public class IncidentService {
 
         return incidents;
     }
+    // Filter incidents by both status and severity
+public List<Incident> filterIncidentsByStatusAndSeverity(
+        String status,
+        String severity) {
+
+    logger.info(
+            "Filtering incidents by status: {} and severity: {}",
+            status,
+            severity
+    );
+
+    List<Incident> incidents =
+            incidentRepository.findByStatusIgnoreCaseAndSeverityIgnoreCase(
+                    status,
+                    severity
+            );
+
+    logger.info(
+            "Found {} incidents with status: {} and severity: {}",
+            incidents.size(),
+            status,
+            severity
+    );
+
+    return incidents;
+}
 }

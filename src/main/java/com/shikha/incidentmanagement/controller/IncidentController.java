@@ -146,4 +146,23 @@ public class IncidentController {
                 incidents
         );
     }
+
+    // Filter incidents by both status and severity
+@GetMapping("/api/incidents/filter/advanced")
+public ApiResponse<List<Incident>> filterIncidentsByStatusAndSeverity(
+        @RequestParam String status,
+        @RequestParam String severity) {
+
+    List<Incident> incidents =
+            incidentService.filterIncidentsByStatusAndSeverity(
+                    status,
+                    severity
+            );
+
+    return new ApiResponse<>(
+            true,
+            "Incidents filtered by status and severity successfully",
+            incidents
+    );
+}
 }
