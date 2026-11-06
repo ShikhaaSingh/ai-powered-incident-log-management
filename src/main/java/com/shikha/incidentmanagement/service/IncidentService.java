@@ -54,36 +54,37 @@ public class IncidentService {
     }
 
     // Create incident
-public Incident createIncident(Incident incident) {
+    public Incident createIncident(Incident incident) {
 
-    logger.info("Creating incident with title: {}", incident.getTitle());
+        logger.info("Creating incident with title: {}", incident.getTitle());
 
-    incident.setId(null);
+        incident.setId(null);
 
-    Incident savedIncident = incidentRepository.save(incident);
+        Incident savedIncident = incidentRepository.save(incident);
 
-    logger.info("Incident created successfully with ID: {}",
-            savedIncident.getId());
+        logger.info("Incident created successfully with ID: {}",
+                savedIncident.getId());
 
-    return savedIncident;
-}
+        return savedIncident;
+    }
 
+    // Update incident
     public Incident updateIncident(Long id, Incident updatedIncident) {
 
-    logger.info("Updating incident with ID: {}", id);
+        logger.info("Updating incident with ID: {}", id);
 
-    Incident existingIncident = getIncidentById(id);
+        Incident existingIncident = getIncidentById(id);
 
-    existingIncident.setTitle(updatedIncident.getTitle());
-    existingIncident.setStatus(updatedIncident.getStatus());
-    existingIncident.setSeverity(updatedIncident.getSeverity());
+        existingIncident.setTitle(updatedIncident.getTitle());
+        existingIncident.setStatus(updatedIncident.getStatus());
+        existingIncident.setSeverity(updatedIncident.getSeverity());
 
-    Incident savedIncident = incidentRepository.save(existingIncident);
+        Incident savedIncident = incidentRepository.save(existingIncident);
 
-    logger.info("Incident updated successfully with ID: {}", id);
+        logger.info("Incident updated successfully with ID: {}", id);
 
-    return savedIncident;
-}
+        return savedIncident;
+    }
 
     // Delete incident
     public void deleteIncident(Long id) {
@@ -113,6 +114,20 @@ public Incident createIncident(Incident incident) {
 
         logger.info("Found {} incidents with status: {}",
                 incidents.size(), status);
+
+        return incidents;
+    }
+
+    // Filter incidents by severity
+    public List<Incident> filterIncidentsBySeverity(String severity) {
+
+        logger.info("Filtering incidents by severity: {}", severity);
+
+        List<Incident> incidents =
+                incidentRepository.findBySeverityIgnoreCase(severity);
+
+        logger.info("Found {} incidents with severity: {}",
+                incidents.size(), severity);
 
         return incidents;
     }

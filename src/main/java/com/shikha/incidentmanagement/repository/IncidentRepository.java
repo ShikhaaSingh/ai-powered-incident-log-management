@@ -8,5 +8,10 @@ import java.util.List;
 
 public interface IncidentRepository extends JpaRepository<Incident, Long> {
 
+    // Filter incidents by status
     List<Incident> findByStatusIgnoreCase(String status);
+
+    // Filter incidents by severity
+    List<Incident> findBySeverityIgnoreCase(String severity);
+
 }
