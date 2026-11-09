@@ -15,4 +15,10 @@ public interface IncidentRepository extends JpaRepository<Incident, Long> {
             String status,
             String severity
     );
+
+    // Count incidents by status
+    long countByStatusIgnoreCase(String status);
+
+    // Count incidents by severity
+    long countBySeverityIgnoreCase(String severity);
 }

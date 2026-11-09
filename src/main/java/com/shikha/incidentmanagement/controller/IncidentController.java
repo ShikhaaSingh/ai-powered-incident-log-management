@@ -2,6 +2,7 @@
 package com.shikha.incidentmanagement.controller;
 
 import com.shikha.incidentmanagement.dto.ApiResponse;
+import com.shikha.incidentmanagement.dto.DashboardSummary;
 import com.shikha.incidentmanagement.model.Incident;
 import com.shikha.incidentmanagement.service.IncidentService;
 
@@ -80,6 +81,25 @@ public class IncidentController {
         );
     }
 
+    // Filter incidents by status and severity
+    @GetMapping("/api/incidents/filter/advanced")
+    public ApiResponse<List<Incident>> filterIncidentsByStatusAndSeverity(
+            @RequestParam String status,
+            @RequestParam String severity) {
+
+        List<Incident> incidents =
+                incidentService.filterIncidentsByStatusAndSeverity(
+                        status,
+                        severity
+                );
+
+        return new ApiResponse<>(
+                true,
+                "Incidents filtered by status and severity successfully",
+                incidents
+        );
+    }
+
     // Create a new incident
     @PostMapping("/api/incidents")
     public ApiResponse<Incident> createIncident(
@@ -147,22 +167,17 @@ public class IncidentController {
         );
     }
 
-    // Filter incidents by both status and severity
-@GetMapping("/api/incidents/filter/advanced")
-public ApiResponse<List<Incident>> filterIncidentsByStatusAndSeverity(
-        @RequestParam String status,
-        @RequestParam String severity) {
+    // Get dashboard summary
+    @GetMapping("/api/incidents/dashboard/summary")
+    public ApiResponse<DashboardSummary> getDashboardSummary() {
 
-    List<Incident> incidents =
-            incidentService.filterIncidentsByStatusAndSeverity(
-                    status,
-                    severity
-            );
+        DashboardSummary summary =
+                incidentService.getDashboardSummary();
 
-    return new ApiResponse<>(
-            true,
-            "Incidents filtered by status and severity successfully",
-            incidents
-    );
-}
+        return new ApiResponse<>(
+                true,
+                "Dashboard summary fetched successfully",
+                summary
+        );
+    }
 }

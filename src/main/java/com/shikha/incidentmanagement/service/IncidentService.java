@@ -1,6 +1,7 @@
 
 package com.shikha.incidentmanagement.service;
 
+import com.shikha.incidentmanagement.dto.DashboardSummary;
 import com.shikha.incidentmanagement.model.Incident;
 import com.shikha.incidentmanagement.repository.IncidentRepository;
 
@@ -9,9 +10,9 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class IncidentService {
 
         List<Incident> incidents = incidentRepository.findAll();
 
-        logger.info("Successfully fetched {} incidents", incidents.size());
+        logger.info("Found {} incidents", incidents.size());
 
         return incidents;
     }
@@ -49,14 +50,16 @@ public class IncidentService {
                     logger.warn("Incident not found with ID: {}", id);
 
                     return new ResponseStatusException(
-                            HttpStatus.NOT_FOUND, "Incident not found");
+                            HttpStatus.NOT_FOUND,
+                            "Incident not found"
+                    );
                 });
     }
 
     // Create incident
     public Incident createIncident(Incident incident) {
 
-        logger.info("Creating incident with title: {}", incident.getTitle());
+        logger.info("Creating new incident: {}", incident.getTitle());
 
         incident.setId(null);
 
@@ -96,7 +99,9 @@ public class IncidentService {
             logger.warn("Cannot delete. Incident not found with ID: {}", id);
 
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Incident not found");
+                    HttpStatus.NOT_FOUND,
+                    "Incident not found"
+            );
         }
 
         incidentRepository.deleteById(id);
@@ -118,6 +123,14 @@ public class IncidentService {
         return incidents;
     }
 
+    // Get incidents with pagination
+    public Page<Incident> getIncidentsWithPagination(Pageable pageable) {
+
+        logger.info("Fetching incidents with pagination");
+
+        return incidentRepository.findAll(pageable);
+    }
+
     // Filter incidents by severity
     public List<Incident> filterIncidentsBySeverity(String severity) {
 
@@ -132,46 +145,68 @@ public class IncidentService {
         return incidents;
     }
 
-    // Get incidents with pagination and sorting
-    public Page<Incident> getIncidentsWithPagination(Pageable pageable) {
+    // Filter incidents by status and severity
+    public List<Incident> filterIncidentsByStatusAndSeverity(
+            String status,
+            String severity) {
 
-        logger.info("Fetching incidents with pagination: page={}, size={}, sort={}",
-                pageable.getPageNumber(),
-                pageable.getPageSize(),
-                pageable.getSort());
+        logger.info(
+                "Filtering incidents by status: {} and severity: {}",
+                status,
+                severity
+        );
 
-        Page<Incident> incidents = incidentRepository.findAll(pageable);
+        List<Incident> incidents =
+                incidentRepository.findByStatusIgnoreCaseAndSeverityIgnoreCase(
+                        status,
+                        severity
+                );
 
-        logger.info("Successfully fetched {} incidents from page {}",
-                incidents.getNumberOfElements(),
-                incidents.getNumber());
+        logger.info(
+                "Found {} incidents with status: {} and severity: {}",
+                incidents.size(),
+                status,
+                severity
+        );
 
         return incidents;
     }
-    // Filter incidents by both status and severity
-public List<Incident> filterIncidentsByStatusAndSeverity(
-        String status,
-        String severity) {
 
-    logger.info(
-            "Filtering incidents by status: {} and severity: {}",
-            status,
-            severity
-    );
+    // Get dashboard summary
+    public DashboardSummary getDashboardSummary() {
 
-    List<Incident> incidents =
-            incidentRepository.findByStatusIgnoreCaseAndSeverityIgnoreCase(
-                    status,
-                    severity
-            );
+        logger.info("Fetching incident dashboard summary");
 
-    logger.info(
-            "Found {} incidents with status: {} and severity: {}",
-            incidents.size(),
-            status,
-            severity
-    );
+        long totalIncidents = incidentRepository.count();
 
-    return incidents;
-}
+        long openIncidents =
+                incidentRepository.countByStatusIgnoreCase("OPEN");
+
+        long resolvedIncidents =
+                incidentRepository.countByStatusIgnoreCase("RESOLVED");
+
+        long lowSeverity =
+                incidentRepository.countBySeverityIgnoreCase("LOW");
+
+        long mediumSeverity =
+                incidentRepository.countBySeverityIgnoreCase("MEDIUM");
+
+        long highSeverity =
+                incidentRepository.countBySeverityIgnoreCase("HIGH");
+
+        long criticalSeverity =
+                incidentRepository.countBySeverityIgnoreCase("CRITICAL");
+
+        logger.info("Dashboard summary fetched successfully");
+
+        return new DashboardSummary(
+                totalIncidents,
+                openIncidents,
+                resolvedIncidents,
+                lowSeverity,
+                mediumSeverity,
+                highSeverity,
+                criticalSeverity
+        );
+    }
 }
