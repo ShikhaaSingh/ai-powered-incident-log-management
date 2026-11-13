@@ -100,6 +100,21 @@ public class IncidentController {
         );
     }
 
+    // Search incidents by title
+    @GetMapping("/api/incidents/search")
+    public ApiResponse<List<Incident>> searchIncidents(
+            @RequestParam String keyword) {
+
+        List<Incident> incidents =
+                incidentService.searchIncidents(keyword);
+
+        return new ApiResponse<>(
+                true,
+                "Incidents searched successfully",
+                incidents
+        );
+    }
+
     // Create a new incident
     @PostMapping("/api/incidents")
     public ApiResponse<Incident> createIncident(

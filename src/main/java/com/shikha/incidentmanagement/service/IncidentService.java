@@ -172,6 +172,20 @@ public class IncidentService {
         return incidents;
     }
 
+    // Search incidents by title
+    public List<Incident> searchIncidents(String keyword) {
+
+        logger.info("Searching incidents with keyword: {}", keyword);
+
+        List<Incident> incidents =
+                incidentRepository.findByTitleContainingIgnoreCase(keyword);
+
+        logger.info("Found {} incidents matching keyword: {}",
+                incidents.size(), keyword);
+
+        return incidents;
+    }
+
     // Get dashboard summary
     public DashboardSummary getDashboardSummary() {
 
