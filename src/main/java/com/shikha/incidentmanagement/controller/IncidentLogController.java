@@ -67,4 +67,17 @@ public class IncidentLogController {
                 logs
         );
     }
+    @GetMapping("/logs/search")
+public ApiResponse<List<IncidentLog>> searchLogs(
+        @RequestParam String keyword) {
+
+    List<IncidentLog> logs =
+            incidentLogService.searchLogs(keyword);
+
+    return new ApiResponse<>(
+            true,
+            "Incident logs searched successfully",
+            logs
+    );
+}
 }

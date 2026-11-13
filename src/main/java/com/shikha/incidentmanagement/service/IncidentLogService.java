@@ -102,4 +102,15 @@ public class IncidentLogService {
 
         return logs;
     }
+    public List<IncidentLog> searchLogs(String keyword) {
+
+    logger.info("Searching incident logs with keyword: {}", keyword);
+
+    List<IncidentLog> logs =
+            incidentLogRepository.findByMessageContainingIgnoreCase(keyword);
+
+    logger.info("Found {} logs matching keyword: {}", logs.size(), keyword);
+
+    return logs;
+}
 }

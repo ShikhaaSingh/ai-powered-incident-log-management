@@ -1,4 +1,3 @@
-
 package com.shikha.incidentmanagement.repository;
 
 import com.shikha.incidentmanagement.model.IncidentLog;
@@ -15,4 +14,7 @@ public interface IncidentLogRepository
 
     // Find logs by their log level
     List<IncidentLog> findByLogLevelIgnoreCase(String logLevel);
+
+    // Search logs by message keyword (case-insensitive)
+    List<IncidentLog> findByMessageContainingIgnoreCase(String keyword);
 }
