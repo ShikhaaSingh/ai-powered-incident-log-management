@@ -1,12 +1,18 @@
 
 package com.shikha.incidentmanagement.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+
+import java.time.LocalDateTime;
 
 @Entity
 public class Incident {
@@ -34,6 +40,12 @@ public class Incident {
     )
     private String severity;
 
+    // Automatically maintained timestamps
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
     public Incident() {
     }
 
@@ -42,6 +54,20 @@ public class Incident {
         this.title = title;
         this.status = status;
         this.severity = severity;
+    }
+
+    // Set timestamps before inserting a new incident
+    @PrePersist
+    protected void onCreate() {
+        LocalDateTime now = LocalDateTime.now();
+        this.createdAt = now;
+        this.updatedAt = now;
+    }
+
+    // Update timestamp before updating an existing incident
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -74,5 +100,13 @@ public class Incident {
 
     public void setSeverity(String severity) {
         this.severity = severity;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 }
