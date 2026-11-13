@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -182,6 +183,37 @@ public class IncidentService {
 
         logger.info("Found {} incidents matching keyword: {}",
                 incidents.size(), keyword);
+
+        return incidents;
+    }
+
+    // Filter incidents by creation date range
+    public List<Incident> filterIncidentsByDateRange(
+            LocalDateTime start,
+            LocalDateTime end) {
+
+        logger.info(
+                "Filtering incidents between {} and {}",
+                start,
+                end
+        );
+
+        if (start.isAfter(end)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Start date must be before or equal to end date"
+            );
+        }
+
+        List<Incident> incidents =
+                incidentRepository.findByCreatedAtBetween(start, end);
+
+        logger.info(
+                "Found {} incidents between {} and {}",
+                incidents.size(),
+                start,
+                end
+        );
 
         return incidents;
     }

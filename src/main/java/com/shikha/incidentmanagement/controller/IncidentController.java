@@ -13,8 +13,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -111,6 +113,27 @@ public class IncidentController {
         return new ApiResponse<>(
                 true,
                 "Incidents searched successfully",
+                incidents
+        );
+    }
+
+    // Filter incidents by creation date range
+    @GetMapping("/api/incidents/filter/date")
+    public ApiResponse<List<Incident>> filterIncidentsByDateRange(
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime start,
+
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime end) {
+
+        List<Incident> incidents =
+                incidentService.filterIncidentsByDateRange(start, end);
+
+        return new ApiResponse<>(
+                true,
+                "Incidents filtered by date range successfully",
                 incidents
         );
     }

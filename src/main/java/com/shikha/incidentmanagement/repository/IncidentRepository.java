@@ -4,6 +4,7 @@ package com.shikha.incidentmanagement.repository;
 import com.shikha.incidentmanagement.model.Incident;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IncidentRepository extends JpaRepository<Incident, Long> {
@@ -22,6 +23,12 @@ public interface IncidentRepository extends JpaRepository<Incident, Long> {
 
     // Search incidents by title
     List<Incident> findByTitleContainingIgnoreCase(String keyword);
+
+    // Filter incidents by creation date range
+    List<Incident> findByCreatedAtBetween(
+            LocalDateTime start,
+            LocalDateTime end
+    );
 
     // Count incidents by status
     long countByStatusIgnoreCase(String status);
