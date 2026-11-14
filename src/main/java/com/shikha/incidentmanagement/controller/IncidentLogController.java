@@ -7,6 +7,9 @@ import com.shikha.incidentmanagement.service.IncidentLogService;
 
 import jakarta.validation.Valid;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -67,17 +70,35 @@ public class IncidentLogController {
                 logs
         );
     }
+
+    // Search logs by message keyword
     @GetMapping("/logs/search")
-public ApiResponse<List<IncidentLog>> searchLogs(
-        @RequestParam String keyword) {
+    public ApiResponse<List<IncidentLog>> searchLogs(
+            @RequestParam String keyword) {
 
-    List<IncidentLog> logs =
-            incidentLogService.searchLogs(keyword);
+        List<IncidentLog> logs =
+                incidentLogService.searchLogs(keyword);
 
-    return new ApiResponse<>(
-            true,
-            "Incident logs searched successfully",
-            logs
-    );
-}
+        return new ApiResponse<>(
+                true,
+                "Incident logs searched successfully",
+                logs
+        );
+    }
+
+    // Get logs with pagination
+    @GetMapping("/logs/page")
+    public ApiResponse<Page<IncidentLog>> getLogsWithPagination(
+            @PageableDefault(size = 5, sort = "id")
+            Pageable pageable) {
+
+        Page<IncidentLog> logs =
+                incidentLogService.getLogsWithPagination(pageable);
+
+        return new ApiResponse<>(
+                true,
+                "Incident logs fetched with pagination successfully",
+                logs
+        );
+    }
 }

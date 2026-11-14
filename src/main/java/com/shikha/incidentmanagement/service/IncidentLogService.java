@@ -9,6 +9,9 @@ import com.shikha.incidentmanagement.repository.IncidentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -102,14 +105,37 @@ public class IncidentLogService {
 
         return logs;
     }
+
+    // Search logs by message keyword
     public List<IncidentLog> searchLogs(String keyword) {
 
-    logger.info("Searching incident logs with keyword: {}", keyword);
+        logger.info("Searching incident logs with keyword: {}", keyword);
 
-    List<IncidentLog> logs =
-            incidentLogRepository.findByMessageContainingIgnoreCase(keyword);
+        List<IncidentLog> logs =
+                incidentLogRepository.findByMessageContainingIgnoreCase(keyword);
 
-    logger.info("Found {} logs matching keyword: {}", logs.size(), keyword);
+        logger.info(
+                "Found {} logs matching keyword: {}",
+                logs.size(),
+                keyword
+        );
+
+        return logs;
+    }
+
+    // Get logs with pagination
+public Page<IncidentLog> getLogsWithPagination(Pageable pageable) {
+
+    logger.info("Fetching incident logs with pagination");
+
+    Page<IncidentLog> logs =
+            incidentLogRepository.findAll(pageable);
+
+    logger.info(
+            "Fetched {} logs from page {}",
+            logs.getNumberOfElements(),
+            logs.getNumber()
+    );
 
     return logs;
 }
