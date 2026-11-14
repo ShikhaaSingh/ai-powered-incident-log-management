@@ -124,4 +124,19 @@ public class IncidentLogController {
                 logs
         );
     }
+
+    // Get logs sorted by timestamp
+    @GetMapping("/logs/sort")
+    public ApiResponse<List<IncidentLog>> getLogsSorted(
+            @RequestParam(defaultValue = "DESC") String direction) {
+
+        List<IncidentLog> logs =
+                incidentLogService.getLogsSorted(direction);
+
+        return new ApiResponse<>(
+                true,
+                "Incident logs sorted successfully",
+                logs
+        );
+    }
 }

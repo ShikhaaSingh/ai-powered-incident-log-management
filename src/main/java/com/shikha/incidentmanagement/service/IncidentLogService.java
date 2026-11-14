@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -164,6 +165,37 @@ public class IncidentLogService {
 
         logger.info(
                 "Found {} logs in the specified date range",
+                logs.size()
+        );
+
+        return logs;
+    }
+
+    // Get logs sorted by timestamp
+    public List<IncidentLog> getLogsSorted(String direction) {
+
+        logger.info(
+                "Fetching incident logs sorted by timestamp: {}",
+                direction
+        );
+
+        Sort.Direction sortDirection;
+
+        try {
+            sortDirection = Sort.Direction.fromString(direction);
+        } catch (IllegalArgumentException exception) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Sort direction must be ASC or DESC"
+            );
+        }
+
+        List<IncidentLog> logs = incidentLogRepository.findAll(
+                Sort.by(sortDirection, "timestamp")
+        );
+
+        logger.info(
+                "Fetched {} logs sorted by timestamp",
                 logs.size()
         );
 
