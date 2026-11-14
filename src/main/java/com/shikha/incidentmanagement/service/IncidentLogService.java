@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -124,19 +125,48 @@ public class IncidentLogService {
     }
 
     // Get logs with pagination
-public Page<IncidentLog> getLogsWithPagination(Pageable pageable) {
+    public Page<IncidentLog> getLogsWithPagination(Pageable pageable) {
 
-    logger.info("Fetching incident logs with pagination");
+        logger.info("Fetching incident logs with pagination");
 
-    Page<IncidentLog> logs =
-            incidentLogRepository.findAll(pageable);
+        Page<IncidentLog> logs =
+                incidentLogRepository.findAll(pageable);
 
-    logger.info(
-            "Fetched {} logs from page {}",
-            logs.getNumberOfElements(),
-            logs.getNumber()
-    );
+        logger.info(
+                "Fetched {} logs from page {}",
+                logs.getNumberOfElements(),
+                logs.getNumber()
+        );
 
-    return logs;
-}
+        return logs;
+    }
+
+    // Filter logs by date range
+    public List<IncidentLog> filterLogsByDateRange(
+            LocalDateTime start,
+            LocalDateTime end) {
+
+        logger.info(
+                "Filtering logs between {} and {}",
+                start,
+                end
+        );
+
+        if (start.isAfter(end)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Start date must be before or equal to end date"
+            );
+        }
+
+        List<IncidentLog> logs =
+                incidentLogRepository.findByTimestampBetween(start, end);
+
+        logger.info(
+                "Found {} logs in the specified date range",
+                logs.size()
+        );
+
+        return logs;
+    }
 }

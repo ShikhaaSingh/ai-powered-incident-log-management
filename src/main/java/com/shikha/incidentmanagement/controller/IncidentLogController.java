@@ -10,8 +10,10 @@ import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -98,6 +100,27 @@ public class IncidentLogController {
         return new ApiResponse<>(
                 true,
                 "Incident logs fetched with pagination successfully",
+                logs
+        );
+    }
+
+    // Filter logs by date range
+    @GetMapping("/logs/filter/date")
+    public ApiResponse<List<IncidentLog>> filterLogsByDateRange(
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime start,
+
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime end) {
+
+        List<IncidentLog> logs =
+                incidentLogService.filterLogsByDateRange(start, end);
+
+        return new ApiResponse<>(
+                true,
+                "Incident logs filtered by date range successfully",
                 logs
         );
     }

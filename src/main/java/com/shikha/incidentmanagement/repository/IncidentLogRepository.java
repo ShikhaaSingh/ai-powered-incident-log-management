@@ -1,9 +1,11 @@
+
 package com.shikha.incidentmanagement.repository;
 
 import com.shikha.incidentmanagement.model.IncidentLog;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IncidentLogRepository
@@ -17,4 +19,10 @@ public interface IncidentLogRepository
 
     // Search logs by message keyword (case-insensitive)
     List<IncidentLog> findByMessageContainingIgnoreCase(String keyword);
+
+    // Find logs between two timestamps
+    List<IncidentLog> findByTimestampBetween(
+            LocalDateTime start,
+            LocalDateTime end
+    );
 }
